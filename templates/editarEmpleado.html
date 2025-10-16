@@ -1,0 +1,17 @@
+<form id="formulario-edicion" method="POST" action="/guardarModificacion">
+  <input type="hidden" name="empleado_id" value="{{ empleado.id }}">
+  
+  <label for="Cedula">Cedula:</label>
+  <input type="number" id="Cedula" name="Cedula" value="{{ empleado.cedula }}" required>
+
+  <label for="Nombre">Nombre:</label>
+  <input type="text" id="nombre" name="nombre" value="{{ empleado.nombre }}"
+  pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" 
+  title="Solo letras" required>
+  
+  // Falta dropdown de puestos
+  <label for="puesto">Puesto:</label>
+  <input type="text" id="puesto" name="puesto" value="{{ empleado.puesto }}">
+  
+  <button type="submit">Guardar Cambios</button>
+</form>
