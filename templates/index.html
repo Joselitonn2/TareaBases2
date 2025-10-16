@@ -19,15 +19,39 @@
 
     <table border="1">
         <tr>
-            <th>ID</th>
+            <th>Cedula</th>
             <th>Nombre</th>
-            <th>Salario</th>
+            <th>Puesto</th>
+            <th></th>
         </tr>
         {% for emp in empleados %}
         <tr>
-            <td>{{ emp.ID }}</td>
+            <td>{{ emp.cedula }}</td>
             <td>{{ emp.nombre }}</td>
-            <td>{{ emp.salario }}</td>
+            <td>{{ emp.puesto }}</td>
+            <td>
+        <div class="dropdown">
+          
+          <button class="menu-btn" onclick="toggleMenu('menu-{{ emp.cedula }}')">
+            &#8942; </button>
+          
+          <div id="menu-{{ empleado.cedula }}" class="dropdown-content">
+            
+            
+            <a href="#" onclick="abrirModalModificar('{{ empleado.cedula }}'); return false;">
+                Editar (Modal)
+            </a>
+
+            <form method="POST" action="{{  }}">
+                <input type="hidden" name="empleado_id" value="{{ emp.cedula }}">
+                <button type="submit" class="dropdown-link-btn" 
+                        onclick="return confirm('¿Eliminar a {{ emp.nombre }}?')">
+                    Eliminar
+                </button>
+            </form>
+          </div>
+        </div>
+        </td>
         </tr>
         {% endfor %}
     </table>
@@ -47,10 +71,12 @@
             <input type="text" name="nombre" placeholder="Nombre" 
             pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" 
             title="Solo letras" required>
-            <input type="number" name="salario" placeholder="Salario" 
-            min="0" step="0.01" required>
+            <input type="number" name="Cedula" placeholder="Cedula" required>
+            //falta puesto con dropdown
             <button type="submit">Guardar</button>
         </form>
     </div>
 </div>
+
+
 </html>
