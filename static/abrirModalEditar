@@ -3,7 +3,7 @@ const modal = document.getElementById('modificarModal');
   const modalBody = document.getElementById('modal-body-form');
 
   // ---------------- Funciones de control del Modal ----------------
-  function abrirModalModificar(empleadoId) {
+  function abrirModalModificar(cedula) {
     // 1. Limpia el cuerpo y muestra el modal
     modalBody.innerHTML = 'Cargando datos...';
     modal.style.display = 'block';
@@ -18,7 +18,6 @@ const modal = document.getElementById('modificarModal');
         return response.text(); 
       })
       .then(htmlForm => {
-        // 4. Inyecta el HTML del formulario en el cuerpo del modal
         modalBody.innerHTML = htmlForm;
         // Opcional: Adjuntar manejadores de eventos al formulario inyectado
         // document.getElementById('formulario-edicion').onsubmit = enviarModificacion; 
@@ -39,6 +38,3 @@ const modal = document.getElementById('modificarModal');
       cerrarModal();
     }
   }
-
-  // La función para manejar el envío del formulario (AJAX) iría aquí...
-  // function enviarModificacion(event) { ... }
