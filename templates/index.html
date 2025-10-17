@@ -37,7 +37,10 @@
           
           <div id="menu-{{ empleado.cedula }}" class="dropdown-content">
             
-            
+            <a href="#" onclick="abrilModalConsulta('{{ empleado.cedula }}'); return false;">
+            Consulta 
+            </a>
+
             <a href="#" onclick="abrirModalEditar('{{ empleado.cedula }}'); return false;">
                 Editar (Modal)
             </a>
@@ -78,5 +81,25 @@
     </div>
 </div>
 
-
+<div id="modalConsulta" style="display: none; border: 1px solid black; padding: 20px; background: #eee; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100;">
+    <h3>Consulta de Empleado</h3>
+    <hr>
+    <div>
+        <strong>Documento de Identidad:</strong> <span id="modal_doc_id"></span>
+    </div>
+    <div>
+        <strong>Nombre:</strong> <span id="modal_nombre"></span>
+    </div>
+    <div>
+        <strong>Puesto:</strong> <span id="modal_puesto"></span>
+    </div>
+    <div>
+        <strong>Saldo de Vacaciones:</strong> <span id="modal_vacaciones"></span>
+    </div>
+    <div>
+        <strong>Estado:</strong> <span id="modal_estado"></span>
+    </div>
+    <hr>
+    <button onclick="cerrarModalConsulta()">Cerrar</button>
+</div>
 </html>
