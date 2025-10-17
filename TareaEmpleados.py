@@ -11,26 +11,75 @@ conexion=pyodbc.connect(
     "PWD=382005ALH;"
 )
 
-@app.route('/')
 
+@app.route('/login', methods=['POST'])
+def login():
+    usuario = request.form['username']
+    contraseña = request.form['password']
+    ipCliente = request.remote_addr 
+
+    cursor = conexion.cursor()
+    codigo_resultado = 99999 
+
+    try:
+        
+        loginSp= "{CALL Login(?, ?, ?, ?)}"
+        
+        cursor.execute(loginSp, (usuario, contraseña, ipCliente, cursor))
+        codigo_resultado = cursor.get_proc_return_code()
+
+    except Exception as e:
+        print(f"Error al ejecutar SP Login: {e}")
+        codigo_resultado = 99999 
+    finally:
+        cursor.close()
+
+  
+    if codigo_resultado == 0:
+        return redirect('/')
+    elif codigo_resultado in (50001, 50002):
+        # 50001: Usuario no existe; 50002: Contraseña inválida
+        return "Credenciales inválidas", 401
+    elif codigo_resultado == 50003:
+        # 50003: Deshabilitado por demasiados intentos (el SP ya registró el evento)
+        mensaje = "Demasiados intentos de login, intente de nuevo dentro de 10 minutos."
+        return mensaje, 429 
+    else:
+        # Manejo de cualquier otro valor
+        return "Error de validación desconocido", 500
+
+
+@app.route('/')
 def index():
     cursor=conexion.cursor()
-    cursor.execute("{CALL ObtenerEmpleados}")
+    cursor.execute("EXEC ListarEmpleado")
     filas=cursor.fetchall()
-    empleados=[{"ID": r[0], "nombre": r[1], "salario": r[2]} for r in filas]
+    empleados=[{"cedula": r[0], "nombre": r[1], "puesto": r[2], "saldo": r[3]} for r in filas]
+    cursor.close()
+    return render_template("index.html", empleados=empleados)
+
+@app.route('/filtro', methods=['POST'])
+def filtro():
+    filtro = request.form['filtro']
+    cursor=conexion.cursor()
+    cursor.execute("EXEC ListarEmpleado @Filtro = ?", filtro)
+    filas=cursor.fetchall()
+    empleados=[{"cedula": r[0], "nombre": r[1], "puesto": r[2], "saldo": r[3]} for r in filas]
     cursor.close()
     return render_template("index.html", empleados=empleados)
 
 @app.route('/insertar', methods=['POST'])
 def insertar():
+    cedula = request.form['cedula']
     nombre = request.form['nombre']
-    salario = request.form['salario']
-
     cursor=conexion.cursor()
-    cursor.execute("{CALL InsertarEmpleado(?,?)}",(nombre, salario))
+    cursor.execute("{CALL InsertarEmpleado(?,?)}",(nombre, cedula))
     conexion.commit()
     cursor.close()
     return redirect('/')
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
