@@ -14,7 +14,7 @@ BEGIN
     -- 1. Desactivar el empleado
     UPDATE dbo.Empleado SET EsActivo = 0 WHERE Id = @IDEmpleado;
 
-    -- 2. Obtener datos para bitácora
+    -- 2. Obtener datos para bitÃ¡cora
     DECLARE @Cedula VARCHAR(64);
     DECLARE @Nombre NVARCHAR(256);
     DECLARE @Puesto NVARCHAR(128);
@@ -29,10 +29,10 @@ BEGIN
     JOIN dbo.Puesto p ON p.Id = e.IdPuesto
     WHERE e.Id = @IDEmpleado;
 
-    -- 3. Registrar en bitácora 
+    -- 3. Registrar en bitÃ¡cora 
     DECLARE @Mensaje NVARCHAR(MAX);
     SET @Mensaje = CONCAT(
-      N'Desactivación Lógica -> Céd=', @Cedula,
+      N'DesactivaciÃ³n LÃ³gica -> CÃ©dula=', @Cedula,
       N'; Nombre=', @Nombre,
       N'; Puesto=', @Puesto,
       N'; Saldo=', @Saldo
@@ -69,4 +69,5 @@ BEGIN
     );
   END CATCH
 END
+
 GO
