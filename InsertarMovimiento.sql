@@ -93,7 +93,7 @@ BEGIN
 
     SET @OutResult = 50008;
 
-    INSERT INTO dbo.DBError(UserName, Number, State, Severity, [Line], [Procedure], [Message])
+    INSERT INTO dbo.DBError(UserName, ErrorNumber, ErrorState, ErrorSeverity, ErrorLine, ErrorProcedure, ErrorMessage)
     VALUES (
       SUSER_SNAME(),
       ERROR_NUMBER(),
