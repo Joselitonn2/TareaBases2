@@ -2,7 +2,7 @@ CREATE OR ALTER PROCEDURE InsertarMovimiento
   @IDEmpleado       INT,
   @IDTipoMovimiento INT,
   @Fecha            DATE,
-  @Monto            DECIMAL(10, 2),
+  @Monto            DECIMAL(10,2),
   @IDPostByUser     INT = NULL,
   @IP               VARCHAR(64) = NULL,
   @OutResult        INT OUTPUT
@@ -12,74 +12,97 @@ BEGIN
   SET XACT_ABORT ON;
 
   -- Variables
-  DECLARE @TipoAccion NVARCHAR(16);
-  DECLARE @SaldoActual DECIMAL(10, 2);
-  DECLARE @NuevoSaldo DECIMAL(10, 2);
+  DECLARE 
+    @Accion NVARCHAR(16),
+    @SaldoPrevio DECIMAL(10,2),
+    @SaldoFinal DECIMAL(10,2),
+    @Mensaje NVARCHAR(MAX);
 
   BEGIN TRY
-    BEGIN TRANSACTION;
+    BEGIN TRAN;
 
-    -- 1. Obtener datos 
-    SELECT @TipoAccion = TipoAccion 
-    FROM dbo.TipoMovimiento 
+    -- Obtener informaci√≥n base 
+    SELECT @Accion = TipoAccion
+    FROM dbo.TipoMovimiento
     WHERE Id = @IDTipoMovimiento;
-    
-    SELECT @SaldoActual = SaldoVacaciones 
-    FROM dbo.Empleado 
+
+    SELECT @SaldoPrevio = SaldoVacaciones
+    FROM dbo.Empleado
     WHERE Id = @IDEmpleado;
 
-    -- 2. Calcular nuevo saldo
-    SET @NuevoSaldo = CASE 
-        WHEN @TipoAccion = N'Credito' THEN @SaldoActual + @Monto 
-        ELSE @SaldoActual - @Monto 
-    END;
+    --Calcular nuevo saldo seg√∫n tipo de movimiento
+    IF @Accion = N'Credito'
+      SET @SaldoFinal = @SaldoPrevio + @Monto;
+    ELSE
+      SET @SaldoFinal = @SaldoPrevio - @Monto;
 
-    -- 3. Validar regla de negocio
-    IF @NuevoSaldo < 0
+    -- Validar saldo negativo
+    IF @SaldoFinal < 0
     BEGIN
-      SET @OutResult = 50011; -- Saldo negativo
+      SET @OutResult = 50011;
+      SET @Mensaje = CONCAT(
+        'Error ', @OutResult,
+        ' | Empleado=', @IDEmpleado,
+        ' | TipoMov=', @IDTipoMovimiento,
+        ' | Monto=', @Monto,
+        ' | SaldoPrevio=', @SaldoPrevio
+      );
 
-      DECLARE @DetalleError NVARCHAR(MAX);
-      SET @DetalleError = N'Error ' + CAST(@OutResult AS NVARCHAR(10)) +
-                          N'; EmpleadoId=' + CAST(@IDEmpleado AS NVARCHAR(20)) +
-                          N'; TipoMovimiento=' + CAST(@IDTipoMovimiento AS NVARCHAR(20)) +
-                          N'; Monto=' + CAST(@Monto AS NVARCHAR(32)) +
-                          N'; SaldoPrevio=' + CAST(@SaldoActual AS NVARCHAR(32));
+      EXEC InsertarBitacora 
+           @IdTipoEvento = 13,
+           @Descripcion = @Mensaje,
+           @IdPostByUser = @IDPostByUser,
+           @PostInIP = @IP;
 
-      -- Registra el error y revierte
-      EXEC InsertarBitacora 13, @DetalleError, @IDPostByUser, @IP;
-      ROLLBACK TRANSACTION;
+      ROLLBACK TRAN;
       RETURN;
     END
 
-    -- 4. Insertar el historial de movimiento
-    INSERT INTO dbo.Movimiento(IdEmpleado, IdTipoMovimiento, Fecha, Monto, NuevoSaldo, IdPostByUser, PostInIP)
-    VALUES(@IDEmpleado, @IDTipoMovimiento, @Fecha, @Monto, @NuevoSaldo, @IDPostByUser, @IP);
+    -- Insertar movimiento
+    INSERT INTO dbo.Movimiento
+      (IdEmpleado, IdTipoMovimiento, Fecha, Monto, NuevoSaldo, IdPostByUser, PostInIP)
+    VALUES
+      (@IDEmpleado, @IDTipoMovimiento, @Fecha, @Monto, @SaldoFinal, @IDPostByUser, @IP);
 
-    -- 5. Actualizar el saldo del empleado
-    UPDATE dbo.Empleado SET SaldoVacaciones = @NuevoSaldo WHERE Id = @IDEmpleado;
+    -- Actualizar saldo del empleado
+    UPDATE dbo.Empleado
+    SET SaldoVacaciones = @SaldoFinal
+    WHERE Id = @IDEmpleado;
 
-    -- 6. Registrar Èxito en bit·cora
-    DECLARE @DetalleExito NVARCHAR(MAX);
-    SET @DetalleExito = N'EmpleadoId=' + CAST(@IDEmpleado AS NVARCHAR(20)) +
-                        N'; TipoMovimiento=' + CAST(@IDTipoMovimiento AS NVARCHAR(20)) +
-                        N'; Monto=' + CAST(@Monto AS NVARCHAR(32)) +
-                        N'; NuevoSaldo=' + CAST(@NuevoSaldo AS NVARCHAR(32));
+    -- Registrar √©xito
+    SET @Mensaje = CONCAT(
+      'Empleado=', @IDEmpleado,
+      ' | TipoMov=', @IDTipoMovimiento,
+      ' | Monto=', @Monto,
+      ' | NuevoSaldo=', @SaldoFinal
+    );
 
-    EXEC InsertarBitacora 14, @DetalleExito, @IDPostByUser, @IP;
+    EXEC InsertarBitacora 
+           @IdTipoEvento = 14,
+           @Descripcion = @Mensaje,
+           @IdPostByUser = @IDPostByUser,
+           @PostInIP = @IP;
 
-    -- 7. Confirmar y finalizar
+    -- Confirmar y finalizar
     SET @OutResult = 0;
-    COMMIT TRANSACTION;
+    COMMIT TRAN;
 
   END TRY
   BEGIN CATCH
-    -- 8. Manejo de errores
-    ROLLBACK TRANSACTION; 
-    SET @OutResult = 50008; -- Error general
-    
+    ROLLBACK TRAN;
+
+    SET @OutResult = 50008;
+
     INSERT INTO dbo.DBError(UserName, Number, State, Severity, [Line], [Procedure], [Message])
-    VALUES(SUSER_SNAME(), ERROR_NUMBER(), ERROR_STATE(), ERROR_SEVERITY(), ERROR_LINE(), ERROR_PROCEDURE(), ERROR_MESSAGE());
+    VALUES (
+      SUSER_SNAME(),
+      ERROR_NUMBER(),
+      ERROR_STATE(),
+      ERROR_SEVERITY(),
+      ERROR_LINE(),
+      ERROR_PROCEDURE(),
+      ERROR_MESSAGE()
+    );
   END CATCH
 END
 GO
