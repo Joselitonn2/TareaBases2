@@ -14,11 +14,11 @@ BEGIN
   BEGIN TRY
     BEGIN TRAN;
 
-    -- 1. Validaciones de formato
+    -- 1. Validaciones de formato   
     IF @DocumentoIdentidad LIKE '%[^0-9]%' BEGIN SET @OutResult = 50010; GOTO Fail; END;
-    IF @NombreCompleto LIKE '%[^A-Za-z¡…Õ”⁄‹—·ÈÌÛ˙¸Ò -]%' BEGIN SET @OutResult = 50009; GOTO Fail; END;
+    IF @NombreCompleto LIKE '%[^A-Za-z√Å√â√ç√ì√ö√ú√ë√°√©√≠√≥√∫√º√± -]%' BEGIN SET @OutResult = 50009; GOTO Fail; END;
 
-    -- 2. Validaciones de duplicados (Corregidas)
+    -- 2. Validaciones de duplicados
     IF EXISTS(SELECT 1 FROM dbo.Empleado WHERE ValorDocumentoIdentidad = @DocumentoIdentidad AND Id <> @IDEmpleado) 
     BEGIN 
       SET @OutResult = 50006; GOTO Fail; 
@@ -29,7 +29,7 @@ BEGIN
       SET @OutResult = 50007; GOTO Fail; 
     END;
 
-    -- 3. Obtener datos "Antes" para bit·cora
+    -- 3. Obtener datos "Antes" para bit√°cora
     DECLARE @CedulaAnterior VARCHAR(64);
     DECLARE @NombreAnterior NVARCHAR(256);
     DECLARE @PuestoAnterior NVARCHAR(128);
@@ -49,7 +49,7 @@ BEGIN
         IdPuesto = @IDPuesto
     WHERE Id = @IDEmpleado;
 
-    -- 5. Registrar Èxito en bit·cora (Mensaje Mejorado)
+    -- 5. Registrar √©xito en bit√°cora
     SET @OutResult = 0;
     
     DECLARE @PuestoNuevo NVARCHAR(128) = (SELECT Nombre FROM dbo.Puesto WHERE Id = @IDPuesto);
@@ -64,9 +64,9 @@ BEGIN
     EXEC InsertarBitacora 8, @MensajeExito, @IDPostByUser, @IP;
 
     COMMIT TRAN;
-    RETURN; -- Fin de la ruta de Èxito
+    RETURN;
 
-    -- 6. Ruta de fallo (para GOTO) (Mensaje Revertido)
+    -- 6. Ruta de fallo
     Fail:
       DECLARE @MensajeError NVARCHAR(MAX);
       SET @MensajeError = CONCAT(
@@ -81,12 +81,12 @@ BEGIN
 
   END TRY
   BEGIN CATCH
-    -- 7. CATCH (para errores inesperados)
+    -- 7. CATCH
     IF XACT_STATE() <> 0 ROLLBACK TRAN;
     
     SET @OutResult = 50008;
 
-    -- 8. Nombres de columnas en DBError (Corregido)
+
     INSERT INTO dbo.DBError(
         UserName, ErrorNumber, ErrorState, ErrorSeverity, 
         ErrorLine, ErrorProcedure, ErrorMessage
