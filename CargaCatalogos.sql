@@ -2,7 +2,7 @@ USE Tarea2BD; -- 1.
 GO
 
 SET NOCOUNT ON;
-PRINT 'Iniciando carga de catálogos (Paso 1)...';
+PRINT 'Iniciando carga de catálogos';
 
 BEGIN TRY
     DECLARE @xml XML;
@@ -17,7 +17,7 @@ BEGIN TRY
 
     -- 3. Validar que el XML se haya leído
     IF @xml IS NULL
-        THROW 50020, 'No se pudo leer el XML (Revisa la ruta o permisos de C:\TEMPORAL)', 1;
+        THROW 50020, 'No se pudo leer el XML', 1;
 
     PRINT 'XML leído correctamente.';
 
