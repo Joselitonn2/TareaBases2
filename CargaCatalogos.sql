@@ -1,8 +1,8 @@
-USE Tarea2BD; -- 1. Asegúrate de estar en la base de datos correcta
+USE Tarea2BD; -- 1. 
 GO
 
 SET NOCOUNT ON;
-PRINT 'Iniciando carga de catálogos (Paso 1)...';
+PRINT 'Iniciando carga de catÃ¡logos (Paso 1)...';
 
 BEGIN TRY
     DECLARE @xml XML;
@@ -11,18 +11,18 @@ BEGIN TRY
     -- 2. Leer el archivo XML desde la ruta especificada
     SELECT @xml = TRY_CAST(BulkColumn AS XML)
     FROM OPENROWSET(
-        BULK N'C:\TEMPORAL\DatosOrdenados.xml', -- <-- Esta es tu ruta
+        BULK N'C:\TEMPORAL\DatosOrdenados.xml',
         SINGLE_BLOB
     ) AS x;
 
-    -- 3. Validar que el XML se haya leído
+    -- 3. Validar que el XML se haya leÃ­do
     IF @xml IS NULL
         THROW 50020, 'No se pudo leer el XML (Revisa la ruta o permisos de C:\TEMPORAL)', 1;
 
-    PRINT 'XML leído correctamente.';
+    PRINT 'XML leÃ­do correctamente.';
 
     -- 4. Cargar Puestos
-    -- (Tu script de Empleado DEPENDE de esto)
+
     MERGE INTO dbo.Puesto AS Target
     USING (
         SELECT
@@ -39,7 +39,7 @@ BEGIN TRY
     PRINT CONCAT('...Puestos insertados/actualizados: ', @RowCount);
 
     -- 5. Cargar Tipos de Evento
-    -- (Tus SPs DEPENDEN de esto)
+
     MERGE INTO dbo.TipoEvento AS Target
     USING (
         SELECT
@@ -57,7 +57,7 @@ BEGIN TRY
     PRINT CONCAT('...Tipos de Evento insertados/actualizados: ', @RowCount);
 
     -- 6. Cargar Tipos de Movimiento
-    -- (Tus SPs y Movimientos DEPENDEN de esto)
+
     MERGE INTO dbo.TipoMovimiento AS Target
     USING (
         SELECT
@@ -77,7 +77,7 @@ BEGIN TRY
     PRINT CONCAT('...Tipos de Movimiento insertados/actualizados: ', @RowCount);
 
     -- 7. Cargar Usuarios
-    -- (Tus SPs y Movimientos DEPENDEN de esto)
+
     MERGE INTO dbo.Usuario AS Target
     USING (
         SELECT
@@ -97,7 +97,7 @@ BEGIN TRY
     PRINT CONCAT('...Usuarios insertados/actualizados: ', @RowCount);
 
     -- 8. Cargar Errores
-    -- (Tus SPs usan estos códigos)
+  
     MERGE INTO dbo.Error AS Target
     USING (
         SELECT
@@ -115,13 +115,13 @@ BEGIN TRY
     SET @RowCount = @@ROWCOUNT;
     PRINT CONCAT('...Errores insertados/actualizados: ', @RowCount);
     
-    PRINT 'Carga de catálogos finalizada.'
+    PRINT 'Carga de catÃ¡logos finalizada.'
 
 END TRY
 BEGIN CATCH
     -- 9. Manejo de Errores
     DECLARE @Msg NVARCHAR(4000) = ERROR_MESSAGE();
     DECLARE @Num INT = ERROR_NUMBER(), @St INT = ERROR_STATE(), @Sev INT = ERROR_SEVERITY();
-    RAISERROR('[Carga Catálogos] %s (Err:%d, State:%d, Sev:%d)', 16, 1, @Msg, @Num, @St, @Sev);
+    RAISERROR('[Carga CatÃ¡logos] %s (Err:%d, State:%d, Sev:%d)', 16, 1, @Msg, @Num, @St, @Sev);
 END CATCH;
 GO
