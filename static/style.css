@@ -160,3 +160,141 @@ button:hover {
         .boton-filtrar:hover {
             background-color: #1e7e34;
         }
+        .dropdown {
+  position: relative;
+  display: inline-block; /* Permite que conviva con otros elementos de la celda */
+}
+
+/* ---------------- Contenido del Menú ---------------- */
+.dropdown-content {
+  display: none; /* OCULTO por defecto */
+  position: absolute;
+  /* Posicionamiento: aparecerá a la derecha/abajo del botón */
+  right: 0; 
+  background-color: #fff;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 10; /* Asegura que esté por encima de la tabla */
+  border: 1px solid #ddd;
+}
+
+/* Muestra el contenido del menú cuando tiene la clase 'show' */
+.dropdown-content.show {
+  display: block;
+}
+
+/* ---------------- Elementos del Menú ---------------- */
+.dropdown-content a, .dropdown-content form button {
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+  width: 100%; /* Para que los enlaces/botones cubran todo el ancho */
+  text-align: left;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.dropdown-content a:hover, .dropdown-content form button:hover {
+  background-color: #f1f1f1;
+}
+
+/* Estilo para el botón de los 3 puntos */
+.menu-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0 5px;
+    line-height: 1; /* Para centrarlo bien verticalmente */
+}
+
+/* Estilo para el botón dentro del formulario, para que se vea como un enlace */
+.dropdown-link-btn {
+    color: inherit; 
+}
+
+/* El modal (cubre toda la pantalla) */
+.modalEditar {
+  display: none; /* Oculto por defecto */
+  position: fixed; 
+  z-index: 20; 
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; 
+  background-color: rgba(0,0,0,0.4); /* Fondo semi-transparente */
+}
+
+/* El contenido del modal (la caja blanca) */
+.modalContentEditar {
+  background-color: #fefefe;
+  margin: 15% auto; /* Centrado vertical y horizontal */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* O el tamaño que necesites */
+  max-width: 600px;
+}
+
+/* El botón de cerrar (x) */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-backdrop {
+    display: none; /* Oculto por defecto, JS lo cambia a 'flex' */
+    position: fixed;
+    z-index: 1000; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /* Fondo semitransparente */
+    
+    /* Centra el modal-dialog */
+    align-items: center; 
+    justify-content: center; 
+}
+
+/* --- 2. CONTENIDO DEL MODAL (Caja flotante) --- */
+.modal-dialog {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%; 
+    max-width: 600px; /* Ancho máximo para que no sea muy grande */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+/* --- 3. BOTÓN DE CIERRE DENTRO DEL FORMULARIO INYECTADO --- */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+.close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+}
