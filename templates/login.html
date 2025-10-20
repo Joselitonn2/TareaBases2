@@ -4,12 +4,31 @@
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="static/style.css">
+    <style>
+        
+        .alerta-inhabilitado {
+            background-color: #fdd;
+            border: 1px solid #f00;
+            padding: 10px;
+            margin-bottom: 20px;
+            color: #c00;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <h1>Iniciar Sesión</h1> 
     <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="Usuario" required>
+        <input type="text" name="usuario" placeholder="Usuario" required>
         <input type="password" name="password" placeholder="Contraseña" required>
         <button type="submit" class="button">Entrar</button>
     </form>
+
+    {% if inhabilitado %}
+        <div class="alerta-inhabilitado">
+            Demasiados intentos de login, 
+            intente de nuevo dentro de 10 minutos.
+        </div>
+    {% endif %}
+
 </body>

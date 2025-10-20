@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Movimientos</title>
+</head>
+<body>
+    <h1>Movimientos del Empleado</h1>
+
+    <h2>Historial de Movimientos (Descendente por Fecha)</h2>
+    
+    {% if movimientos %}
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Fecha Movimiento</th>
+                <th>Tipo de Movimiento</th>
+                <th>Monto</th>
+                <th>Nuevo Saldo</th>
+                <th>Usuario que Registró</th>
+                <th>IP de Registro</th>
+                <th>Estampa de Tiempo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mov in movimientos %}
+            <tr>
+                <td>{{ mov.fecha }}</td>
+                <td>{{ mov.tipo }}</td>
+                <td>{{ mov.monto | round(2) }}</td>
+                <td>{{ mov.nuevoSaldo | round(2) }}</td>
+                <td>{{ mov.usuarioPost}}</td>
+                <td>{{ mov.ipPost }}</td>
+                <td>{{ mov.tiempoPost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No hay movimientos registrados para este empleado.</p>
+    {% endif %}
+
+</body>
+</html>

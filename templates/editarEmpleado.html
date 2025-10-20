@@ -1,17 +1,31 @@
-<form id="formulario-edicion" method="POST" action="/guardarModificacion">
-  <input type="hidden" name="empleado_id" value="{{ empleado.id }}">
-  
-  <label for="Cedula">Cedula:</label>
-  <input type="number" id="Cedula" name="Cedula" value="{{ empleado.cedula }}" required>
+<div class="modal-header">
+    <h2>Editar Empleado: {{ empleado.nombre }}</h2>
+    <span class="close-btn" onclick="cerrarModalEditar()">&times;</span> 
+</div>
 
-  <label for="Nombre">Nombre:</label>
-  <input type="text" id="nombre" name="nombre" value="{{ empleado.nombre }}"
-  pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" 
-  title="Solo letras" required>
-  
-  // Falta dropdown de puestos
-  <label for="puesto">Puesto:</label>
-  <input type="text" id="puesto" name="puesto" value="{{ empleado.puesto }}">
-  
-  <button type="submit">Guardar Cambios</button>
+<form id="formulario-edicion" method="POST" action="/guardarModificacion">
+    
+    <input type="hidden" name="id" value="{{ empleado.id }}">
+
+    <label for="cedula">Cédula:</label>
+    <input type="number" id="cedula" name="cedula" value="{{ empleado.cedula }}" required>
+
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" value="{{ empleado.nombre }}"
+    pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" 
+    title="Solo letras" required>
+    
+    
+    <label for="puesto_id">Puesto:</label>
+    <select id="puesto_id" name="puesto_id" required>
+        {% for puesto in puestos %}
+            <option value="{{ puesto.id }}" 
+                {% if puesto.id == empleado.id_puesto_actual %}selected{% endif %}>
+                {{ puesto.nombre }}
+            </option>
+        {% endfor %}
+    </select>
+    
+    <button type="submit">Guardar Cambios</button>
+    <button type="button" onclick="cerrarModalEditar()">Cancelar</button>
 </form>

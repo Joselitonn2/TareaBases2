@@ -10,11 +10,11 @@
     
     <h1>Lista de Empleados</h1>
     
-    <form action="/filtrar" method="get" class="form-filtro">
-        <input type="text" name="nombre" placeholder="Filtrar por nombre o cedula" 
-            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]+" 
-            title="Solo letras o numeros" required>
-            <button type="submit"class="boton-filtrar">Filtrar</button>
+    <form action="/index" method="post" class="form-filtro">
+    <input type="text" name="filtro" placeholder="Filtrar por nombre o cedula" 
+        pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ0-9\s]+" 
+        title="Solo letras o numeros">
+        <button type="submit" class="boton-filtrar">Filtrar</button>
     </form>
 
     <table border="1">
@@ -22,33 +22,39 @@
             <th>Cedula</th>
             <th>Nombre</th>
             <th>Puesto</th>
+            <th>Saldo</th>
             <th></th>
         </tr>
-        {% for emp in empleados %}
+        {% for empleado in empleados %}
         <tr>
-            <td>{{ emp.cedula }}</td>
-            <td>{{ emp.nombre }}</td>
-            <td>{{ emp.puesto }}</td>
+            <td>{{ empleado.cedula }}</td>
+            <td>{{ empleado.nombre }}</td>
+            <td>{{ empleado.puesto }}</td>
+            <td>{{ empleado.saldo }}</td>
             <td>
         <div class="dropdown">
           
-          <button class="menu-btn" onclick="toggleMenu('menu-{{ emp.cedula }}')">
+          <button class="menu-btn" onclick="desplegarMenu('menu-{{ empleado.id }}')">
             &#8942; </button>
           
-          <div id="menu-{{ empleado.cedula }}" class="dropdown-content">
+          <div id="menu-{{ empleado.id }}" class="dropdown-content">
             
-            <a href="#" onclick="abrilModalConsulta('{{ empleado.cedula }}'); return false;">
-            Consulta 
+            <a href="/listarMovimientos/{{ empleado.id }}" target="_blank">
+                Ver Movimientos
+            </a>
+            
+            <a href="#" onclick="abrirModalConsulta('{{ empleado.cedula }}'); return false;">
+                Consulta 
             </a>
 
             <a href="#" onclick="abrirModalEditar('{{ empleado.cedula }}'); return false;">
                 Editar (Modal)
             </a>
 
-            <form method="POST" action="{{  }}">
-                <input type="hidden" name="empleado_id" value="{{ emp.cedula }}">
+            <form method="POST" action="/eliminar">
+                <input type="hidden" name="empleado_id" value="{{ empleado.id }}">
                 <button type="submit" class="dropdown-link-btn" 
-                        onclick="return confirm('¿Eliminar a {{ emp.nombre }}?')">
+                        onclick="return confirm('¿Eliminar a {{ empleado.nombre }}?')">
                     Eliminar
                 </button>
             </form>
@@ -74,7 +80,7 @@
             <input type="text" name="nombre" placeholder="Nombre" 
             pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" 
             title="Solo letras" required>
-            <input type="number" name="Cedula" placeholder="Cedula" required>
+            <input type="number" name="cedula" placeholder="cedula" required>
             //falta puesto con dropdown
             <button type="submit">Guardar</button>
         </form>
@@ -85,7 +91,7 @@
     <h3>Consulta de Empleado</h3>
     <hr>
     <div>
-        <strong>Documento de Identidad:</strong> <span id="modal_doc_id"></span>
+        <strong>Documento de Identidad:</strong> <span id="modal_cedula"></span>
     </div>
     <div>
         <strong>Nombre:</strong> <span id="modal_nombre"></span>
@@ -96,10 +102,11 @@
     <div>
         <strong>Saldo de Vacaciones:</strong> <span id="modal_vacaciones"></span>
     </div>
-    <div>
-        <strong>Estado:</strong> <span id="modal_estado"></span>
-    </div>
     <hr>
     <button onclick="cerrarModalConsulta()">Cerrar</button>
 </div>
+</body> 
+<script src="{{ url_for('static', filename='js/desplegarMenu.js') }}"></script>
+<script src="{{ url_for('static', filename='js/abrirModalConsulta.js') }}"></script>
+<script src="{{ url_for('static', filename='js/abrirModalEditar.js') }}"></script>
 </html>
