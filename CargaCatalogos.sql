@@ -1,4 +1,4 @@
-USE Tarea2BD; -- 1. 
+USE Tarea2BD;
 GO
 
 SET NOCOUNT ON;
@@ -36,7 +36,7 @@ BEGIN TRY
         VALUES (Source.Nombre, Source.Salario);
     
     SET @RowCount = @@ROWCOUNT;
-    PRINT CONCAT('...Puestos insertados/actualizados: ', @RowCount);
+    PRINT CONCAT('Puestos insertados/actualizados: ', @RowCount);
 
     -- 5. Cargar Tipos de Evento
 
@@ -54,7 +54,7 @@ BEGIN TRY
         UPDATE SET Target.Nombre = Source.Nombre;
 
     SET @RowCount = @@ROWCOUNT;
-    PRINT CONCAT('...Tipos de Evento insertados/actualizados: ', @RowCount);
+    PRINT CONCAT('Tipos de Evento insertados/actualizados: ', @RowCount);
 
     -- 6. Cargar Tipos de Movimiento
 
@@ -74,7 +74,7 @@ BEGIN TRY
         UPDATE SET Target.Nombre = Source.Nombre, Target.TipoAccion = Source.TipoAccion;
     
     SET @RowCount = @@ROWCOUNT;
-    PRINT CONCAT('...Tipos de Movimiento insertados/actualizados: ', @RowCount);
+    PRINT CONCAT('Tipos de Movimiento insertados/actualizados: ', @RowCount);
 
     -- 7. Cargar Usuarios
 
@@ -94,7 +94,7 @@ BEGIN TRY
         UPDATE SET Target.Username = Source.Username, Target.Password = Source.Password;
 
     SET @RowCount = @@ROWCOUNT;
-    PRINT CONCAT('...Usuarios insertados/actualizados: ', @RowCount);
+    PRINT CONCAT('Usuarios insertados/actualizados: ', @RowCount);
 
     -- 8. Cargar Errores
   
@@ -113,7 +113,7 @@ BEGIN TRY
         UPDATE SET Target.Descripcion = Source.Descripcion;
     
     SET @RowCount = @@ROWCOUNT;
-    PRINT CONCAT('...Errores insertados/actualizados: ', @RowCount);
+    PRINT CONCAT('Errores insertados/actualizados: ', @RowCount);
     
     PRINT 'Carga de catálogos finalizada.'
 
