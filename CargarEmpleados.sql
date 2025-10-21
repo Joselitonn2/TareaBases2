@@ -55,7 +55,7 @@ BEGIN TRY
 
     WHILE @Contador <= @TotalEmpleados
     BEGIN
-        -- 3A. Leer la fila actual de la variable de tabla
+        --Leer la fila actual de la variable de tabla
         SELECT
             @Documento = Documento,
             @Nombre = Nombre,
@@ -66,16 +66,16 @@ BEGIN TRY
 
         PRINT CONCAT(N'  -> Simulando [', @Fecha, N'] Contratación de: ', @Nombre);
 
-        -- 3B. Traducir el Nombre del Puesto a su ID numérico
+        --Traducir el Nombre del Puesto a su ID numérico
         DECLARE @IDPuesto INT = (SELECT Id FROM dbo.Puesto WHERE Nombre = @PuestoNombre);
         
         IF @IDPuesto IS NULL
         BEGIN
-            PRINT CONCAT('     ADVERTENCIA: No se encontró el puesto "', @PuestoNombre, '". Omitiendo este empleado.');
+            PRINT CONCAT('No se encontró el puesto "', @PuestoNombre, '". Omitiendo este empleado.');
         END
         ELSE
         BEGIN
-            -- 3C. LLAMAR AL STORED PROCEDURE
+            --llamar SP
             EXEC dbo.InsertarEmpleado
                 @DocumentoIdentidad = @Documento,
                 @NombreCompleto = @Nombre,
@@ -86,7 +86,7 @@ BEGIN TRY
                 @IDNuevoEmpleado = @IDNuevoEmpleado OUTPUT,
                 @OutResult = @OutResult OUTPUT;
 
-            -- 3D. Validar el resultado del SP
+            --Validar el resultado del SP
             IF @OutResult <> 0
             BEGIN
                 DECLARE @ErrorMsg NVARCHAR(512) = (SELECT Descripcion FROM dbo.Error WHERE Codigo = @OutResult);
@@ -94,7 +94,7 @@ BEGIN TRY
             END
         END
 
-        -- 3E. Incrementar el contador para pasar a la siguiente fila
+        --Incrementar el contador para pasar a la siguiente fila
         SET @Contador = @Contador + 1;
     END
 
@@ -104,6 +104,6 @@ END TRY
 BEGIN CATCH
     DECLARE @Msg NVARCHAR(4000) = ERROR_MESSAGE();
     DECLARE @Num INT = ERROR_NUMBER(), @St INT = ERROR_STATE(), @Sev INT = ERROR_SEVERITY();
-    RAISERROR('[Carga Empleados con SP-WHILE] %s (Err:%d, State:%d, Sev:%d)', 16, 1, @Msg, @Num, @St, @Sev);
+    RAISERROR('[Carga Empleados] %s (Err:%d, State:%d, Sev:%d)', 16, 1, @Msg, @Num, @St, @Sev);
 END CATCH;
 GO
