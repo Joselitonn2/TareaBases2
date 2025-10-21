@@ -14,9 +14,9 @@ BEGIN
   BEGIN TRY
     BEGIN TRAN;
 
-    -- 1. Validaciones de formato   
+    -- 1. Validaciones de formato
     IF @DocumentoIdentidad LIKE '%[^0-9]%' BEGIN SET @OutResult = 50010; GOTO Fail; END;
-    IF @NombreCompleto LIKE '%[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ -]%' BEGIN SET @OutResult = 50009; GOTO Fail; END;
+    IF @NombreCompleto LIKE '%[^A-Za-zÁÉÍÓÚÜÑáéíóúüñ .-]%' BEGIN SET @OutResult = 50009; GOTO Fail; END;
 
     -- 2. Validaciones de duplicados
     IF EXISTS(SELECT 1 FROM dbo.Empleado WHERE ValorDocumentoIdentidad = @DocumentoIdentidad AND Id <> @IDEmpleado) 
@@ -64,6 +64,7 @@ BEGIN
     EXEC InsertarBitacora 8, @MensajeExito, @IDPostByUser, @IP;
 
     COMMIT TRAN;
+    SELECT @OutResult AS ResultCode;
     RETURN;
 
     -- 6. Ruta de fallo
@@ -78,6 +79,7 @@ BEGIN
       
       EXEC InsertarBitacora 7, @MensajeError, @IDPostByUser, @IP;
       ROLLBACK TRAN;
+      SELECT @OutResult AS ResultCode;
 
   END TRY
   BEGIN CATCH
@@ -86,7 +88,7 @@ BEGIN
     
     SET @OutResult = 50008;
 
-
+    
     INSERT INTO dbo.DBError(
         UserName, ErrorNumber, ErrorState, ErrorSeverity, 
         ErrorLine, ErrorProcedure, ErrorMessage
@@ -95,6 +97,7 @@ BEGIN
         SUSER_SNAME(), ERROR_NUMBER(), ERROR_STATE(), ERROR_SEVERITY(), 
         ERROR_LINE(), ERROR_PROCEDURE(), ERROR_MESSAGE()
     );
+    SELECT @OutResult AS ResultCode;
   END CATCH
 END
 GO
