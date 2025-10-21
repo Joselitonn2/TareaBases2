@@ -11,16 +11,17 @@ BEGIN
     -- Registra el evento de Logout
     EXEC InsertarBitacora 
            @IdTipoEvento = 4, 
-           @Descripcion  = N'Cierre de sesión exitoso', 
+           @Descripcion  = N'Cierre de sesiÃ³n exitoso', 
            @IdPostByUser = @IDPostByUser, 
            @PostInIP     = @IP;
            
-    SET @OutResult = 0; -- 0 = Éxito
+    SET @OutResult = 0;
+    SELECT @OutResult AS ResultCode;
 
   END TRY
   BEGIN CATCH
-    
-    SET @OutResult = 50008; -- Error general
+    --InsertarBitacora falla
+    SET @OutResult = 50008;
 
     INSERT INTO dbo.DBError(
         UserName, 
@@ -40,6 +41,7 @@ BEGIN
         ERROR_PROCEDURE(), 
         ERROR_MESSAGE()
     );
+    SELECT @OutResult AS ResultCode;
   END CATCH
 END
 GO
