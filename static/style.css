@@ -5,7 +5,7 @@ body {
     color: #333;
 }
 
-h1, h2 {
+h1, h3 {
     text-align: center;
     color: #444;
 }
@@ -63,8 +63,8 @@ input[type="password"], input[type="number"] {
 
 button {
     display: block;
-    margin: 30px auto;  
     background-color: #28a745;
+    justify-content: center;
     color: white;
     border: none;
     padding: 12px 25px;
@@ -72,6 +72,7 @@ button {
     border-radius: 5px;
     font-size: 16px;
 }
+
 
 button:hover {
     background-color: #218838;
@@ -184,6 +185,12 @@ button:hover {
 }
 
 /* ---------------- Elementos del Menú ---------------- */
+.dropdown-content form {
+    margin: 0;
+    padding: 0;
+    display: block; 
+}
+
 .dropdown-content a, .dropdown-content form button {
   padding: 10px 15px;
   text-decoration: none;
@@ -195,8 +202,9 @@ button:hover {
   cursor: pointer;
 }
 
-.dropdown-content a:hover, .dropdown-content form button:hover {
-  background-color: #f1f1f1;
+/* 6. Agrega el efecto hover */
+.dropdown-content form button.dropdown-link-btn:hover {
+    background-color: #f1f1f1; /* O el color que uses en los links <a> */
 }
 
 /* Estilo para el botón de los 3 puntos */
@@ -297,4 +305,9 @@ button:hover {
 .close-btn:focus {
     color: black;
     text-decoration: none;
+}
+
+.alert {
+    
+    text-align: center; 
 }

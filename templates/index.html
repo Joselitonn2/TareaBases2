@@ -17,6 +17,18 @@
         <button type="submit" class="boton-filtrar">Filtrar</button>
     </form>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flashes-container">
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
     <table border="1">
         <tr>
             <th>Cedula</th>
@@ -39,7 +51,7 @@
           
           <div id="menu-{{ empleado.id }}" class="dropdown-content">
             
-            <a href="/listarMovimientos/{{ empleado.id }}" target="_blank">
+            <a href="/listarMovimientos/{{ empleado.id }}?nombre={{ empleado.nombre }}&saldo={{ empleado.saldo }}&cedula={{ empleado.cedula }}" target="_blank">
                 Ver Movimientos
             </a>
             
@@ -51,8 +63,8 @@
                 Editar (Modal)
             </a>
 
-            <form method="POST" action="/eliminar">
-                <input type="hidden" name="empleado_id" value="{{ empleado.id }}">
+            <form method="POST" action="/eliminarEmpleado">
+                <input type="hidden" name="empleadoId" value="{{ empleado.id }}">
                 <button type="submit" class="dropdown-link-btn" 
                         onclick="return confirm('¿Eliminar a {{ empleado.nombre }}?')">
                     Eliminar
@@ -81,7 +93,13 @@
             pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+" 
             title="Solo letras" required>
             <input type="number" name="cedula" placeholder="cedula" required>
-            //falta puesto con dropdown
+             <label for="puestoId">Puesto:</label>
+            <select id="puestoId" name="puestoId" required>
+                {% for puesto in puestos %}
+                    <option value="{{ puesto.id }}"> {{ puesto.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
             <button type="submit">Guardar</button>
         </form>
     </div>

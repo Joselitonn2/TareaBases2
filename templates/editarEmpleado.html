@@ -5,7 +5,7 @@
 
 <form id="formulario-edicion" method="POST" action="/guardarModificacion">
     
-    <input type="hidden" name="id" value="{{ empleado.id }}">
+    <input type="hidden" name="empleadoId" value="{{ empleado.id }}">
 
     <label for="cedula">Cédula:</label>
     <input type="number" id="cedula" name="cedula" value="{{ empleado.cedula }}" required>
@@ -16,11 +16,11 @@
     title="Solo letras" required>
     
     
-    <label for="puesto_id">Puesto:</label>
-    <select id="puesto_id" name="puesto_id" required>
+    <label for="puestoId">Puesto:</label>
+    <select id="puestoId" name="puestoId" required>
         {% for puesto in puestos %}
             <option value="{{ puesto.id }}" 
-                {% if puesto.id == empleado.id_puesto_actual %}selected{% endif %}>
+                {% if puesto.id == empleado.idPuestoActual %}selected{% endif %}>
                 {{ puesto.nombre }}
             </option>
         {% endfor %}

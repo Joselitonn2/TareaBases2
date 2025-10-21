@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Movimientos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
-    <h1>Movimientos del Empleado</h1>
+    <h1>Movimientos de {{nombreEmpleado}}</h1>
 
     <h2>Historial de Movimientos (Descendente por Fecha)</h2>
     
@@ -39,6 +41,27 @@
     {% else %}
     <p>No hay movimientos registrados para este empleado.</p>
     {% endif %}
+    <h3>Agregar movimiento</h3>
+    <button onclick="document.getElementById('modal').style.display='block'">
+    Insertar movimiento
+</button>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <h3>Insertar movimiento a {{cedula}}-{{nombreEmpleado}}. Saldo: {{saldoEmpleado}}</h3>
+        <form action="/insertarMovimiento/{{empleadoId}}" method="POST">
+            <label for="movId">Tipos de Movimiento:</label>
+            <select id="movId" name="movId" required>
+                {% for mov in movs %}
+                    <option value="{{ mov.id }}"> {{ mov.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+            <input type="number" name="monto" placeholder="Monto" required>  
+            <button type="submit">Guardar</button>
+        </form>
+    </div>
+</div>
 
 </body>
 </html>
