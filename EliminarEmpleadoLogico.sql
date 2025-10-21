@@ -43,6 +43,7 @@ BEGIN
     -- 4. Confirmar
     SET @OutResult = 0;
     COMMIT TRAN;
+    SELECT @OutResult AS ResultCode;
 
   END TRY
   BEGIN CATCH
@@ -67,7 +68,7 @@ BEGIN
         ERROR_PROCEDURE(), 
         ERROR_MESSAGE()
     );
+    SELECT @OutResult AS ResultCode;
   END CATCH
 END
-
 GO
