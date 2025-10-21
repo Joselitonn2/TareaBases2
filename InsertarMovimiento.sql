@@ -55,6 +55,7 @@ BEGIN
            @PostInIP = @IP;
 
       ROLLBACK TRAN;
+      SELECT @OutResult AS ResultCode;
       RETURN;
     END
 
@@ -86,11 +87,11 @@ BEGIN
     -- Confirmar y finalizar
     SET @OutResult = 0;
     COMMIT TRAN;
+    SELECT @OutResult AS ResultCode;
 
   END TRY
   BEGIN CATCH
     ROLLBACK TRAN;
-
     SET @OutResult = 50008;
 
     INSERT INTO dbo.DBError(UserName, ErrorNumber, ErrorState, ErrorSeverity, ErrorLine, ErrorProcedure, ErrorMessage)
@@ -103,6 +104,7 @@ BEGIN
       ERROR_PROCEDURE(),
       ERROR_MESSAGE()
     );
+    SELECT @OutResult AS ResultCode;
   END CATCH
 END
 GO
