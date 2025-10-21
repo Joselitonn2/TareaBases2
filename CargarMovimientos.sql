@@ -17,9 +17,9 @@ BEGIN TRY
     IF @xml IS NULL
         THROW 50020, 'No se pudo leer el XML', 1;
 
-    PRINT 'XML leído.';
+    PRINT 'XML leÃ­do.';
 
-    -- 2. Crear una VARIABLE de tabla para almacenar los movimientos del XML
+    -- 2. Crear una variable de tabla para almacenar los movimientos del XML
     DECLARE @MovimientosParaCargar TABLE (
         FilaID INT IDENTITY(1,1) PRIMARY KEY,
         DocIdentidad VARCHAR(64),
@@ -40,7 +40,7 @@ BEGIN TRY
         n.value('@PostByUser','NVARCHAR(64)'),
         n.value('@PostInIP','VARCHAR(64)')
     FROM @xml.nodes('/Datos/Movimientos/movimiento') AS T(n)
-    ORDER BY n.value('@PostTime','DATETIME'); -- Orden cronológico
+    ORDER BY n.value('@PostTime','DATETIME'); -- Orden cronolÃ³gico
 
     -- 4. Iniciar el Bucle WHILE
     DECLARE @Contador INT = 1;
@@ -51,7 +51,7 @@ BEGIN TRY
 
     WHILE @Contador <= @TotalMovimientos
     BEGIN
-        -- 4A. Leer la fila actual de la variable de tabla
+        -- Leer la fila actual de la variable de tabla
         SELECT
             @DocIdentidad = DocIdentidad,
             @IDTipoMov = IDTipoMovimiento,
@@ -62,19 +62,19 @@ BEGIN TRY
         FROM @MovimientosParaCargar
         WHERE FilaID = @Contador;
 
-        PRINT CONCAT(N'  -> Simulando [', @Fecha, N'] Movimiento de ', @Monto, ' para: ', @DocIdentidad);
+        
 
-        -- 4B. Traducir Cédula a IDEmpleado y Username a IDUsuario
+        -- Traducir CÃ©dula a IDEmpleado y Username a IDUsuario
         DECLARE @IDEmpleado INT = (SELECT Id FROM dbo.Empleado WHERE ValorDocumentoIdentidad = @DocIdentidad);
         DECLARE @IDUsuario INT = (SELECT Id FROM dbo.Usuario WHERE Username = @Username);
         
         IF @IDEmpleado IS NULL OR @IDUsuario IS NULL
         BEGIN
-            PRINT CONCAT('     ADVERTENCIA: No se encontró Empleado (', @DocIdentidad, ') o Usuario (', @Username, '). Omitiendo movimiento.');
+            PRINT CONCAT('No se encontrÃ³ Empleado (', @DocIdentidad, ') o Usuario (', @Username, '). Omitiendo movimiento.');
         END
         ELSE
         BEGIN
-            -- 4C. LLAMAR AL STORED PROCEDURE
+            -- llamar SP
             EXEC dbo.InsertarMovimiento
                 @IDEmpleado = @IDEmpleado,
                 @IDTipoMovimiento = @IDTipoMov,
@@ -84,26 +84,26 @@ BEGIN TRY
                 @IP = @IP,
                 @OutResult = @OutResult OUTPUT;
 
-            -- 4D. Validar el resultado del SP
+            --Validar el resultado del SP
             IF @OutResult <> 0
             BEGIN
                 -- Si el SP devuelve un error
                 DECLARE @ErrorMsg NVARCHAR(512) = (SELECT Descripcion FROM dbo.Error WHERE Codigo = @OutResult);
-                PRINT CONCAT('     ---> ¡ERROR! El SP devolvió el código ', @OutResult, ' (', ISNULL(@ErrorMsg, 'Descripción no encontrada'), '). Omitiendo este movimiento.');
+                PRINT CONCAT('error', @OutResult, ' (', ISNULL(@ErrorMsg, 'DescripciÃ³n no encontrada'), '). Omitiendo movimiento.');
             END
         END
 
-        -- 4E. Incrementar el contador para pasar a la siguiente fila
+        --Incrementar el contador para pasar a la siguiente fila
         SET @Contador = @Contador + 1;
     END
 
-    PRINT '... Simulación de carga de movimientos finalizada (con posibles errores omitidos).';
+    PRINT 'carga de movimientos finalizada.';
 
 END TRY
 BEGIN CATCH
-    -- Este CATCH ahora solo se activará si hay un error GRAVE
+    -- Este CATCH ahora solo se activarÃ¡ si hay un error
     DECLARE @Msg NVARCHAR(4000) = ERROR_MESSAGE();
     DECLARE @Num INT = ERROR_NUMBER(), @St INT = ERROR_STATE(), @Sev INT = ERROR_SEVERITY();
-    RAISERROR('[Carga Movimientos con SP-WHILE] %s (Err:%d, State:%d, Sev:%d)', 16, 1, @Msg, @Num, @St, @Sev);
+    RAISERROR('[Carga Movimientos] %s (Err:%d, State:%d, Sev:%d)', 16, 1, @Msg, @Num, @St, @Sev);
 END CATCH;
 GO
