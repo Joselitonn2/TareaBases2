@@ -9,7 +9,7 @@ CREATE OR ALTER PROCEDURE InsertarMovimiento
 AS
 BEGIN
   SET NOCOUNT ON;
-  SET XACT_ABORT ON;
+  
 
   -- Variables
   DECLARE 
