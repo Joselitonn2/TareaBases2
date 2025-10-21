@@ -10,7 +10,7 @@ CREATE OR ALTER PROCEDURE InsertarEmpleado
 AS
 BEGIN
   SET NOCOUNT ON;
-  SET XACT_ABORT ON;
+
 
   -- 1. Validaciones de formato
   IF @DocumentoIdentidad LIKE '%[^0-9]%' BEGIN SET @OutResult = 50010; SELECT @OutResult AS ResultCode; RETURN; END;
@@ -53,7 +53,7 @@ BEGIN
 
   END TRY
   BEGIN CATCH
-    IF XACT_STATE() <> 0 ROLLBACK TRAN;
+    ROLLBACK TRAN;
     
     SET @OutResult = 50008;
     
