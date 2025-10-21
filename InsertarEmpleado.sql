@@ -1,6 +1,6 @@
 CREATE OR ALTER PROCEDURE InsertarEmpleado
   @DocumentoIdentidad VARCHAR(64),   
-  @NombreCompleto     NVARCHAR(256), 
+  @NombreCompleto     NVARCHAR(256),  
   @IDPuesto           INT,
   @FechaContratacion  DATE,
   @IDPostByUser       INT = NULL,
@@ -13,21 +13,21 @@ BEGIN
   SET XACT_ABORT ON;
 
   -- 1. Validaciones de formato
-  IF @DocumentoIdentidad LIKE '%[^0-9]%' BEGIN SET @OutResult = 50010; RETURN; END;
-  IF @NombreCompleto LIKE '%[^A-Za-z¡…Õ”⁄‹—·ÈÌÛ˙¸Ò -]%' BEGIN SET @OutResult = 50009; RETURN; END;
+  IF @DocumentoIdentidad LIKE '%[^0-9]%' BEGIN SET @OutResult = 50010; SELECT @OutResult AS ResultCode; RETURN; END;
+  IF @NombreCompleto LIKE '%[^A-Za-z√Å√â√ç√ì√ö√ú√ë√°√©√≠√≥√∫√º√± .-]%' BEGIN SET @OutResult = 50009; SELECT @OutResult AS ResultCode; RETURN; END;
 
   -- 2. Validaciones de duplicados
   IF EXISTS (SELECT 1 FROM dbo.Empleado WHERE ValorDocumentoIdentidad = @DocumentoIdentidad) 
   BEGIN 
-    SET @OutResult = 50004; RETURN; 
+    SET @OutResult = 50004; SELECT @OutResult AS ResultCode; RETURN; 
   END;
   
   IF EXISTS (SELECT 1 FROM dbo.Empleado WHERE Nombre = @NombreCompleto) 
   BEGIN 
-    SET @OutResult = 50005; RETURN; 
+    SET @OutResult = 50005; SELECT @OutResult AS ResultCode; RETURN; 
   END;
 
-  -- 3. TransacciÛn
+  -- 3. Transacci√≥n
   BEGIN TRY
     BEGIN TRAN;
 
@@ -37,10 +37,10 @@ BEGIN
     -- Obtener el ID del nuevo empleado
     SET @IDNuevoEmpleado = SCOPE_IDENTITY();
 
-    -- Registrar Èxito en bit·cora 
+    -- Registrar √©xito en bit√°cora 
     DECLARE @Mensaje NVARCHAR(MAX);
     SET @Mensaje = CONCAT(
-      N'CÈdula: ', @DocumentoIdentidad,
+      N'C√©dula: ', @DocumentoIdentidad,
       N'; Nombre: ', @NombreCompleto,
       N'; PuestoId: ', @IDPuesto
     );
@@ -49,13 +49,13 @@ BEGIN
 
     COMMIT TRAN;
     SET @OutResult = 0;
+    SELECT @OutResult AS ResultCode;
 
   END TRY
   BEGIN CATCH
     IF XACT_STATE() <> 0 ROLLBACK TRAN;
     
     SET @OutResult = 50008;
-    
     
     INSERT INTO dbo.DBError(
         UserName, 
@@ -75,6 +75,7 @@ BEGIN
         ERROR_PROCEDURE(), 
         ERROR_MESSAGE()
     );
+    SELECT @OutResult AS ResultCode;
   END CATCH
 END
 GO
