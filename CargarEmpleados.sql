@@ -64,7 +64,7 @@ BEGIN TRY
         FROM @EmpleadosParaCargar
         WHERE FilaID = @Contador;
 
-        PRINT CONCAT(N'  -> Simulando [', @Fecha, N'] Contratación de: ', @Nombre);
+
 
         --Traducir el Nombre del Puesto a su ID numérico
         DECLARE @IDPuesto INT = (SELECT Id FROM dbo.Puesto WHERE Nombre = @PuestoNombre);
@@ -107,3 +107,4 @@ BEGIN CATCH
     RAISERROR('[Carga Empleados] %s (Err:%d, State:%d, Sev:%d)', 16, 1, @Msg, @Num, @St, @Sev);
 END CATCH;
 GO
+
